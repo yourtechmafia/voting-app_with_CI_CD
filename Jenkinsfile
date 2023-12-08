@@ -24,8 +24,8 @@ pipeline {
                         sh "docker build -t ${REGISTRY}/${app}:latest ./${app}"
                     }
                 }
+                echo 'Image Building Complete'
             }
-            echo 'Image Building Complete'
         }
         
         stage('Login to Docker Hub') {
@@ -35,8 +35,8 @@ pipeline {
                         sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
                     }
                 }
+                echo 'Logged in to Docker Hub'
             }
-            echo 'Logged in to Docker Hub'
         }
         
         stage('Push Image to Docker Hub') {
@@ -47,8 +47,8 @@ pipeline {
                         sh "docker push ${REGISTRY}/${app}:latest"
                     }
                 }
+                echo "Pushed Images to Docker Hub"
             }
-            echo "Pushed Images to Docker Hub"
         }
 
         stage('Deploy to Kubernetes') {
@@ -56,8 +56,8 @@ pipeline {
                 script {
                     sh "kubectl apply -f ./k8s/ --namespace=${NAMESPACE}"
                 }
+                echo "Deployed to Kubernetes"
             }
-            echo "Deployed to Kubernetes"
         }
     }
 
@@ -73,8 +73,8 @@ pipeline {
                     // Echo the captured output
                     echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
                 }
+                echo 'Post-build actions completed.'
             }
-            echo 'Post-build actions completed.'
         }
     }
 }
