@@ -79,18 +79,18 @@ pipeline {
 
     post {
         always {
-            steps {
-                script {
-                    // Clean up Docker images
-                    sh "docker rmi \$(docker images -q ${REGISTRY}/*:latest) --force"
-                    echo "Cleaned up Docker images"
-                    // Capture the output of the kubectl command
-                    def loadBalancerServices = sh(script: "kubectl get services --namespace ${NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
-                    // Echo the captured output
-                    echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
-                }
-                echo 'Post-build actions completed.'
+            script {
+                // Clean up Docker images
+                sh "docker rmi \$(docker images -q ${REGISTRY}/*:latest) --force"
+                echo "Cleaned up Docker images"
+
+                // Capture the output of the kubectl command
+                def loadBalancerServices = sh(script: "kubectl get services --namespace ${NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
+
+                // Echo the captured output
+                echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
             }
+            echo 'Post-build actions completed.'
         }
     }
 }
