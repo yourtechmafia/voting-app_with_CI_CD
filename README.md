@@ -14,7 +14,7 @@ The application is a simple voting platform where users can cast votes. It consi
 - **Cloud-Native Integration:** Deployed on an EKS cluster with considerations for cloud-specific features like EBS CSI driver.
 - **Kubernetes Secrets:** This project leverages Kubernetes Secrets to securely manage sensitive configurations. The PostgreSQL database credentials are stored as secrets, ensuring secure access and management. This approach exemplifies best practices in secure configuration management in a Kubernetes environment.
 - **Persistent Storage with PVC and PV:** The application leverages Kubernetes PersistentVolumes (PVs) and PersistentVolumeClaims (PVCs) for efficient and reliable data storage. This ensures data persistence for stateful components like the Postgres database, allowing for data retention across pod restarts and deployments.
-- **Load Balancing:** Utilizes Kubernetes LoadBalancer services to manage incoming traffic.
+- **Load Balancing:** Utilizes Kubernetes LoadBalancer services to manage and route incoming (external) traffic to nodes in private subnets.
 
 ## Getting Started
 
@@ -73,7 +73,7 @@ kubectl delete -f k8s/
 
 This project incorporates a robust Jenkins pipeline for continuous integration and deployment, automating the lifecycle of application development from code changes to deployment in Kubernetes.
 
-### Pipeline Stages
+### Pipeline Multistages
 
 - **Checkout:** Clones the latest code from the main branch of the GitHub repository.
 - **Build Docker Images:** Builds Docker images for the `vote`, `result`, and `worker` components of the application.
