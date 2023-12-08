@@ -20,7 +20,7 @@ The application is a simple voting platform where users can cast votes. It consi
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) for container management.- [kubectl](https://kubernetes.io/docs/tasks/tools/) for interacting with your Kubernetes cluster.
+- - [kubectl](https://kubernetes.io/docs/tasks/tools/) for interacting with your Kubernetes cluster.
 - Access to a Kubernetes cluster, such as [Minikube](https://minikube.sigs.k8s.io/docs/start/) for local testing or [EKS](https://aws.amazon.com/eks/) for cloud deployment.
 
 ### Running the App with Docker Compose
