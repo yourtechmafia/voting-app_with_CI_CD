@@ -6,7 +6,7 @@ This repository showcases an example of a distributed voting application running
 
 The application is a simple voting platform where users can cast votes. It consists of several microservices written in different languages (Python, Node.js, .NET), demonstrating a polyglot architecture. It uses Redis for messaging and Postgres for storage. 
 
-## Key Features (including Secure Configuration Management)
+## Key Features (Secure Configuration Management)
 
 - **Containerized Microservices:** Each component of the application runs in its own Docker container.
 - **Kubernetes Orchestration:** The app is deployed on a Kubernetes cluster, showcasing pod management, service discovery, and scalability.
