@@ -2,12 +2,20 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub_credentials')
+        DOCKERHUB_CREDENTIALS = 'dockerhub_credentials'  //Your ID of Jenkins credentials for Docker Hub
         REGISTRY = "techmafia"
         NAMESPACE = "votingapp"
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/yourtechmafia/voting-app_with_CI_CD'
+                echo 'Checkout complete'
+            }
+        }
+        
         stage('Build Docker Images') {
             steps {
                 script {
@@ -16,20 +24,30 @@ pipeline {
                         sh "docker build -t ${REGISTRY}/${app}:latest ./${app}"
                     }
                 }
+            echo 'Image Building Complete'
             }
         }
-
-        stage('Push to Docker Hub') {
+        
+        stage('Login to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                        def apps = ['vote', 'result', 'worker']
-                        for (app in apps) {
-                            def image = docker.image("${REGISTRY}/${app}:latest")
-                            image.push()
-                        }
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
                     }
                 }
+            echo 'Logged in to Docker Hub'
+            }
+        }
+        
+        stage('Push Image to Docker Hub') {
+            steps {
+                script {
+                    def apps = ['vote', 'result', 'worker']
+                    for (app in apps) {
+                        sh "docker push ${REGISTRY}/${app}:latest"
+                    }
+                }
+            echo "Pushed Images to Docker Hub"
             }
         }
 
