@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub_credentials'  //Your ID of Jenkins credentials for Docker Hub
         REGISTRY = "techmafia"
-        NAMESPACE = "votingapp"
+        NAMESPACE = "votingapp"    //A stage creates this if it doesn't already exist in your K8s cluster
     }
 
     stages {
@@ -48,6 +48,22 @@ pipeline {
                     }
                 }
                 echo "Pushed Images to Docker Hub"
+            }
+        }
+
+        stage('Check/Create Kubernetes Namespace') {
+            steps {
+                script {
+                    // Check if the namespace exists
+                    def namespaceExists = sh(script: "kubectl get namespace ${NAMESPACE} --ignore-not-found", returnStdout: true).trim()
+                    // Create the namespace if it does not exist
+                    if (namespaceExists == "") {
+                        echo "Creating namespace ${NAMESPACE}"
+                        sh "kubectl create namespace ${NAMESPACE}"
+                    } else {
+                        echo "Namespace ${NAMESPACE} already exists"
+                    }
+                }
             }
         }
 
