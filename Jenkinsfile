@@ -24,8 +24,8 @@ pipeline {
                         sh "docker build -t ${REGISTRY}/${app}:latest ./${app}"
                     }
                 }
-            echo 'Image Building Complete'
             }
+            echo 'Image Building Complete'
         }
         
         stage('Login to Docker Hub') {
@@ -35,8 +35,8 @@ pipeline {
                         sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
                     }
                 }
-            echo 'Logged in to Docker Hub'
             }
+            echo 'Logged in to Docker Hub'
         }
         
         stage('Push Image to Docker Hub') {
@@ -47,8 +47,8 @@ pipeline {
                         sh "docker push ${REGISTRY}/${app}:latest"
                     }
                 }
-            echo "Pushed Images to Docker Hub"
             }
+            echo "Pushed Images to Docker Hub"
         }
 
         stage('Deploy to Kubernetes') {
@@ -57,17 +57,23 @@ pipeline {
                     sh "kubectl apply -f ./k8s/ --namespace=${NAMESPACE}"
                 }
             }
+            echo "Deployed to Kubernetes"
         }
     }
 
     post {
         always {
-            // Clean up Docker images
-            sh "docker rmi \$(docker images -q ${REGISTRY}/*:latest) --force"
-            // Capture the output of the kubectl command
-            def loadBalancerServices = sh(script: "kubectl get services --namespace ${NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
-            // Echo the captured output
-            echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
+            steps {
+                script {
+                    // Clean up Docker images
+                    sh "docker rmi \$(docker images -q ${REGISTRY}/*:latest) --force"
+                    echo "Cleaned up Docker images"
+                    // Capture the output of the kubectl command
+                    def loadBalancerServices = sh(script: "kubectl get services --namespace ${NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
+                    // Echo the captured output
+                    echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
+                }
+            }
             echo 'Post-build actions completed.'
         }
     }
