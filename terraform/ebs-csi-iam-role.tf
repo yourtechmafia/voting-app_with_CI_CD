@@ -8,11 +8,11 @@ resource "aws_iam_role" "ebs_csi_role" {
         Action = "sts:AssumeRoleWithWebIdentity",
         Effect = "Allow",
         Principal = {
-          Federated = aws_iam_openid_connect_provider.oidc_provider.arn
+          Federated = data.aws_iam_openid_connect_provider.existing_oidc_provider.arn
         },
         Condition = {
           StringEquals = {
-            "${aws_iam_openid_connect_provider.oidc_provider.url}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+            "${data.aws_iam_openid_connect_provider.existing_oidc_provider.url}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
           }
         }
       },
