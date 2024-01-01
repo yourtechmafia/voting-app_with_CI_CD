@@ -4,7 +4,7 @@ resource "aws_eks_node_group" "node-grp" {
     node_role_arn   = aws_iam_role.worker.arn
     subnet_ids      = [aws_subnet.Mysubnet01.id, aws_subnet.Mysubnet02.id]
     capacity_type   = "ON_DEMAND"
-    disk_size       = [var.disk_size]
+    disk_size       = var.node_disk_size
     instance_types  = [var.instance_type]
 
     labels = {
@@ -28,20 +28,4 @@ resource "aws_eks_node_group" "node-grp" {
     ]labels = {
       env = "dev"
     }
-
-    scaling_config {
-      desired_size = 2
-      max_size     = 2
-      min_size     = 1
-    }
-
-    update_config {
-      max_unavailable = 1
-    }
-
-    depends_on = [
-      aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
-      aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
-      aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
-    ]
 }
