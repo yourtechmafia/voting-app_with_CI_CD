@@ -33,7 +33,7 @@ variable "instance_type" {
   default     = "t2.small"
 }
 
-variable "disk_size" {
+variable "node_disk_size" {
   description = "Nodes disk size"
   default     = "20"
 }
