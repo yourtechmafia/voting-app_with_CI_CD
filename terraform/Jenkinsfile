@@ -73,7 +73,32 @@ pipeline {
                     // Update kubeconfig with the new EKS cluster
                     sh "aws eks update-kubeconfig --name ${clusterName} --region ${AWS_DEFAULT_REGION}"
                 }
-                echo 'EKS environment provisioned with Terraform'
+                echo 'EKS environment provisioned with Terraform.'
+            }
+        }
+
+        stage('Check/Create Kubernetes Namespace') {
+            steps {
+                script {
+                    // Check if the namespace exists
+                    def namespaceExists = sh(script: "kubectl get namespace ${K8s_NAMESPACE} --ignore-not-found", returnStdout: true).trim()
+                    // Create the namespace if it does not exist
+                    if (namespaceExists == "") {
+                        echo "Creating namespace ${K8s_NAMESPACE}"
+                        sh "kubectl create namespace ${K8s_NAMESPACE}"
+                    } else {
+                        echo "Namespace ${K8s_NAMESPACE} already exists"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to the Kubernetes Namespace') {
+            steps {
+                script {
+                    sh "kubectl apply -f ./k8s/ --namespace=${K8s_NAMESPACE}"
+                }
+                echo "Deployed to Kubernetes"
             }
         }
     }
