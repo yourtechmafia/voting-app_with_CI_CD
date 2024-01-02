@@ -6,7 +6,7 @@ pipeline {
         REPOSITORY_URL = 'https://github.com/yourtechmafia/voting-app_with_CI_CD' // Default repo URL
         DOCKERHUB_CREDENTIALS = 'dockerhub_credentials'  //Your ID of Jenkins credentials for Docker Hub
         DOCKER_REGISTRY = "techmafia"
-        K8s_NAMESPACE = "votingapp"    //A stage creates this if it doesn't already exist in your K8s cluster
+        K8s_NAMESPACE = "votingapp"    //We'll create a namespace to deploy all manifests to. Deleting just the namespace will delete all resources created.
     }
 
     stages {
