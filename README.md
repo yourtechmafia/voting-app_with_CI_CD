@@ -1,6 +1,6 @@
 # Enhanced Voting App with Docker, Kubernetes, and CI/CD
 
-This repository showcases an example of a distributed voting application running across multiple Docker containers, orchestrated with Kubernetes, and automated with a Jenkins CI/CD pipeline. It's a practical demonstration of using containerization and orchestration technologies for a microservices architecture in a cloud environment like AWS.
+This repository showcases an example of a distributed voting application running across multiple Docker containers, orchestrated with Kubernetes, automated with a Jenkins CI/CD pipeline, and optionally provisioning the entire infrastructure and components required using Terraform. It's a practical demonstration of using containerization and orchestration tools and infrastructure-as-code technologies for a microservices architecture in a cloud environment like AWS.
 
 ## Overview
 
@@ -8,14 +8,24 @@ The application is a simple voting platform where users can cast votes. It consi
 
 ## Key Features (Secure Configuration Management)
 
-- **Containerized Microservices:** Each component of the application runs in its own Docker container.
-- **Kubernetes Orchestration:** The app is deployed on a Kubernetes cluster, showcasing pod management, service discovery, and scalability.
-- **CI/CD Pipeline:** Automated build and deployment using Jenkins, including pushing Docker images to Docker Hub and deploying to Kubernetes.
-- **Cloud-Native Integration:** Deployed on an EKS cluster with considerations for cloud-specific features like EBS CSI driver.
-- **Kubernetes Secrets:** This project leverages Kubernetes Secrets to securely manage sensitive configurations. The PostgreSQL database credentials are stored as secrets, ensuring secure access and management. This approach exemplifies best practices in secure configuration management in a Kubernetes environment.
-- **Persistent Storage with PVC and PV:** The application leverages Kubernetes PersistentVolumes (PVs) and PersistentVolumeClaims (PVCs) for efficient and reliable data storage. This ensures data persistence for stateful components like the Postgres database, allowing for data retention across pod restarts and deployments.
-- **Load Balancing:** Utilizes Kubernetes LoadBalancer services to manage and route incoming (external) traffic to nodes in private subnets.
+- **Containerized Microservices Architecture:** The application is broken down into microservices, each running in its own Docker container. This design demonstrates a polyglot approach, using Python, Node.js, and .NET, and highlights the benefits of containerization for microservice architectures.
 
+- **Kubernetes Orchestration and Scalability:** Deployed on Kubernetes, the app showcases sophisticated orchestration capabilities, including automated scaling, self-healing, and load balancing. It exemplifies how Kubernetes manages the lifecycle of containerized applications and maintains the desired state.
+
+- **Advanced CI/CD Pipeline with Jenkins:** The project integrates a comprehensive Jenkins CI/CD pipeline, automating the entire process from code changes to production deployment. This includes building Docker images, pushing them to Docker Hub, and deploying updates to the Kubernetes cluster, ensuring continuous integration and delivery.
+
+- **Infrastructure as Code with Terraform:** The entire AWS EKS environment (including security groups, VPC, EBS CSI Driver, IAM Roles and Policies, OIDC Provider, and Configuration) is provisioned using Terraform, demonstrating Infrastructure as Code (IaC) practices. This approach allows for repeatable, consistent, and efficient infrastructure provisioning and management.
+
+- **Secure Configuration with Kubernetes Secrets:** Sensitive configurations such as database credentials are managed securely using Kubernetes Secrets. This practice aligns with security best practices in Kubernetes, ensuring the safe handling of confidential data.
+
+- **Persistent Storage Management:** Utilizing Kubernetes PersistentVolumes (PVs) and PersistentVolumeClaims (PVCs), the application ensures data persistence for stateful services. This feature is crucial for maintaining data across pod restarts and re-deployments.
+
+- **Load Balancing with AWS Integration:** The application leverages Kubernetes LoadBalancer services, integrated with AWS, to manage and route incoming traffic. This setup illustrates the effective use of cloud-native features, enhancing the application's accessibility and reliability.
+
+- **AWS Cloud-Native Features:** Deployed in an AWS EKS environment, the project takes full advantage of cloud-native features like the EBS CSI driver for persistent storage, showcasing a cloud-first approach in application deployment.
+
+These features collectively make this project a comprehensive showcase of modern application development and deployment practices, integrating containerization, orchestration, CI/CD, cloud-native technologies, and infrastructure automation.
+ 
 ## Getting Started
 
 ### Prerequisites
