@@ -1,4 +1,4 @@
-# Enhanced Voting App with Docker, Kubernetes, and CI/CD
+# Enhanced Voting App with Docker, Kubernetes, Jenkins CI/CD, and Complete Infrastructure Automation with Terraform
 
 This repository showcases an example of a distributed voting application running across multiple Docker containers, orchestrated with Kubernetes, automated with a Jenkins CI/CD pipeline, and optionally provisioning the entire infrastructure and components required using Terraform. It's a practical demonstration of using containerization and orchestration tools and infrastructure-as-code technologies for a microservices architecture in a cloud environment like AWS.
 
