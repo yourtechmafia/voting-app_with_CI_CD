@@ -2,16 +2,18 @@ pipeline {
     agent any
 
     environment {
+        GIT_BRANCH = 'main'        // Default branch
+        REPOSITORY_URL = 'https://github.com/yourtechmafia/voting-app_with_CI_CD' // Default repo URL
         DOCKERHUB_CREDENTIALS = 'dockerhub_credentials'  //Your ID of Jenkins credentials for Docker Hub
-        REGISTRY = "techmafia"
-        NAMESPACE = "votingapp"    //A stage creates this if it doesn't already exist in your K8s cluster
+        DOCKER_REGISTRY = "techmafia"
+        K8s_NAMESPACE = "votingapp"    //A stage creates this if it doesn't already exist in your K8s cluster
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/yourtechmafia/voting-app_with_CI_CD'
+                git branch: "${env.GIT_BRANCH}",
+                    url: "${env.REPOSITORY_URL}'
                 echo 'Checkout complete'
             }
         }
@@ -21,7 +23,7 @@ pipeline {
                 script {
                     def apps = ['vote', 'result', 'worker']
                     for (app in apps) {
-                        sh "docker build -t ${REGISTRY}/${app}:latest ./${app}"
+                        sh "docker build -t ${DOCKER_REGISTRY}/${app}:latest ./${app}"
                     }
                 }
                 echo 'Image Building Complete'
@@ -44,7 +46,7 @@ pipeline {
                 script {
                     def apps = ['vote', 'result', 'worker']
                     for (app in apps) {
-                        sh "docker push ${REGISTRY}/${app}:latest"
+                        sh "docker push ${DOCKER_REGISTRY}/${app}:latest"
                     }
                 }
                 echo "Pushed Images to Docker Hub"
@@ -55,13 +57,13 @@ pipeline {
             steps {
                 script {
                     // Check if the namespace exists
-                    def namespaceExists = sh(script: "kubectl get namespace ${NAMESPACE} --ignore-not-found", returnStdout: true).trim()
+                    def namespaceExists = sh(script: "kubectl get namespace ${K8s_NAMESPACE} --ignore-not-found", returnStdout: true).trim()
                     // Create the namespace if it does not exist
                     if (namespaceExists == "") {
-                        echo "Creating namespace ${NAMESPACE}"
-                        sh "kubectl create namespace ${NAMESPACE}"
+                        echo "Creating namespace ${K8s_NAMESPACE}"
+                        sh "kubectl create namespace ${K8s_NAMESPACE}"
                     } else {
-                        echo "Namespace ${NAMESPACE} already exists"
+                        echo "Namespace ${K8s_NAMESPACE} already exists"
                     }
                 }
             }
@@ -70,7 +72,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh "kubectl apply -f ./k8s/ --namespace=${NAMESPACE}"
+                    sh "kubectl apply -f ./k8s/ --namespace=${K8s_NAMESPACE}"
                 }
                 echo "Deployed to Kubernetes"
             }
@@ -81,14 +83,14 @@ pipeline {
         always {
             script {
                 // Clean up Docker images
-                sh "docker rmi \$(docker images -q ${REGISTRY}/*:latest) --force"
+                sh "docker rmi \$(docker images -q ${DOCKER_REGISTRY}/*:latest) --force"
                 echo "Cleaned up Docker images"
 
                 // Capture the output of the kubectl command
-                def loadBalancerServices = sh(script: "kubectl get services --namespace ${NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
+                def loadBalancerServices = sh(script: "kubectl get services --namespace ${K8s_NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
 
                 // Echo the captured output
-                echo "LoadBalancer Services in namespace ${NAMESPACE}:\n${loadBalancerServices}"
+                echo "LoadBalancer Services in namespace ${K8s_NAMESPACE}:\n${loadBalancerServices}"
             }
             echo 'Post-build actions completed.'
         }
