@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_BRANCH = 'main'
+        REPOSITORY_URL = 'https://github.com/yourtechmafia/voting-app_with_CI_CD'
+        DOCKERHUB_CREDENTIALS = 'dockerhub_credentials'
+        DOCKER_REGISTRY = "techmafia"
+        K8s_NAMESPACE = "votingapp"
+        AWS_DEFAULT_REGION = 'eu-west-2' // Set your region
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: "${env.GIT_BRANCH}",
+                    url: "${env.REPOSITORY_URL}'
+                echo 'Checkout complete'
+            }
+        }
+        
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    def apps = ['vote', 'result', 'worker']
+                    for (app in apps) {
+                        sh "docker build -t ${DOCKER_REGISTRY}/${app}:latest ./${app}"
+                    }
+                }
+                echo 'Image Building Complete'
+            }
+        }
+        
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_credentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                        sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+                    }
+                }
+                echo 'Logged in to Docker Hub'
+            }
+        }
+        
+        stage('Push Image to Docker Hub') {
+            steps {
+                script {
+                    def apps = ['vote', 'result', 'worker']
+                    for (app in apps) {
+                        sh "docker push ${DOCKER_REGISTRY}/${app}:latest"
+                    }
+                }
+                echo "Pushed Images to Docker Hub"
+            }
+        }
+
+        stage('Provision AWS EKS Environment with Terraform') {
+            steps {
+                script {
+                    // Change directory to the terraform folder located in the repo root
+                    dir('terraform') {
+                        // Initialize Terraform
+                        sh "terraform init"
+
+                        // Apply Terraform configuration
+                        sh "terraform apply -auto-approve"
+
+                        // Fetch EKS cluster name
+                        def clusterName = sh(script: "terraform output cluster_name", returnStdout: true).trim()
+                    }
+
+                    // Update kubeconfig with the new EKS cluster
+                    sh "aws eks update-kubeconfig --name ${clusterName} --region ${AWS_DEFAULT_REGION}"
+                }
+                echo 'EKS environment provisioned with Terraform'
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Clean up Docker images
+                sh "docker rmi \$(docker images -q ${DOCKER_REGISTRY}/*:latest) --force"
+                echo "Cleaned up Docker images"
+
+                // Capture the output of the kubectl command
+                def loadBalancerServices = sh(script: "kubectl get services --namespace ${K8s_NAMESPACE} --output wide | grep LoadBalancer", returnStdout: true).trim()
+
+                // Echo the captured output
+                echo "LoadBalancer Services in namespace ${K8s_NAMESPACE}:\n${loadBalancerServices}"
+            }
+        }
+    }
+}
