@@ -30,7 +30,7 @@ These features collectively make this project a comprehensive showcase of modern
 
 ### Basic Prerequisites
 
-- [Docker](https://www.docker.com/): Docker is required as the application components are containerized. Familiarity with Docker, Docker Builds, Docker Registry, and containerization concepts is beneficial.
+- [Docker](https://www.docker.com/) is required as the application components are containerized. Familiarity with Docker, Docker Builds, Docker Registry, and containerization concepts is beneficial.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) for interacting with your Kubernetes cluster.
 - Access to a Kubernetes cluster, such as [Minikube](https://minikube.sigs.k8s.io/docs/start/) for local testing or [EKS](https://aws.amazon.com/eks/) for cloud deployment.
 
