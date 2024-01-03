@@ -4,7 +4,7 @@ This repository showcases an example of a distributed voting application running
 
 ## Overview
 
-The application is a simple voting platform where users can cast votes. It consists of several microservices written in different languages (Python, Node.js, .NET), demonstrating a polyglot architecture. It uses Redis for messaging and Postgres for storage. 
+The application is a simple voting platform where users can cast votes. It consists of several microservices written in different languages (Python, Node.js, .NET), demonstrating a polyglot architecture. It uses [Redis](https://redis.io/) for messaging and [Postgres](https://www.postgresql.org/) for storage. 
 
 ## Key Features (Secure Configuration Management and Provisioning of Cloud-Native Infrastructure)
 
@@ -82,7 +82,15 @@ kubectl delete -f k8s/
 ```
 ## Jenkins CI/CD Pipeline
 
-This project incorporates a robust Jenkins pipeline for continuous integration and deployment, automating the lifecycle of application development from code changes to deployment in Kubernetes.
+This project incorporates a robust Jenkins pipeline for continuous integration and deployment, automating the lifecycle of application development from code changes to deployment in Kubernetes. The pipeline incorporates different environmental variables for easier code replication.
+
+### Key Features of the Pipeline
+
+- **Automated Image Builds:** Ensures that the latest version of the application is containerized.
+- **Docker Hub Integration:** Seamlessly pushes images to Docker Hub, ready for deployment.
+- **Dynamic Namespace Management:** Intelligently handles Kubernetes namespaces, creating them as needed.
+- **Kubernetes Deployment:** Automates the deployment process to Kubernetes, making the latest version of the app always available.
+- **Resource Cleanup:** Maintains a clean build environment by removing unused Docker images after the build process.
 
 ### Pipeline Multistages
 
@@ -93,14 +101,6 @@ This project incorporates a robust Jenkins pipeline for continuous integration a
 - **Check/Create Kubernetes Namespace:** Checks if the specified Kubernetes namespace exists and creates it if it doesn't.
 - **Deploy to Kubernetes:** Deploys the application to Kubernetes using manifests in the `k8s` directory.
 - **Post-build Cleanup:** Removes the built Docker images from the Jenkins agent to free up space.
-
-### Key Features of the Pipeline
-
-- **Automated Image Builds:** Ensures that the latest version of the application is containerized.
-- **Docker Hub Integration:** Seamlessly pushes images to Docker Hub, ready for deployment.
-- **Dynamic Namespace Management:** Intelligently handles Kubernetes namespaces, creating them as needed.
-- **Kubernetes Deployment:** Automates the deployment process to Kubernetes, making the latest version of the app always available.
-- **Resource Cleanup:** Maintains a clean build environment by removing unused Docker images after the build process.
 
 ### Prerequisites for Jenkins
 
