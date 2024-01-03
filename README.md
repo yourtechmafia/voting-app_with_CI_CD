@@ -28,8 +28,9 @@ These features collectively make this project a comprehensive showcase of modern
  
 ## Getting Started
 
-### Prerequisites
+### Basic Prerequisites
 
+- [Docker](https://www.docker.com/): Docker is required as the application components are containerized. Familiarity with Docker, Docker Builds, Docker Registry, and containerization concepts is beneficial.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/) for interacting with your Kubernetes cluster.
 - Access to a Kubernetes cluster, such as [Minikube](https://minikube.sigs.k8s.io/docs/start/) for local testing or [EKS](https://aws.amazon.com/eks/) for cloud deployment.
 
@@ -114,6 +115,10 @@ This project incorporates a robust Jenkins pipeline for continuous integration a
 
 By integrating this Jenkins pipeline, the project demonstrates a practical application of CI/CD principles, ensuring that updates and new features are smoothly and reliably rolled out. This CI/CD setup ensures that the application is automatically updated in the Kubernetes cluster with each code change, making the development process more efficient and reliable.
 
+## Terraform Infrastructure Provisioning
+
+The `terraform` folder contains the complete Terraform configurations for provisioning and managing the entire AWS EKS (Elastic Kubernetes Service) infrastructure used by the Advanced Voting Application. It illustrates how to completely automate cloud infrastructure setup using Infrastructure as Code (IaC) principles. It also has a `Jenkinsfile` multistage pipeline that extends the root `Jenkinsfile` (adds a stage to provision the infrastructure with Terraform).
+
 ## Architecture
 
 ![Architecture diagram](architecture.excalidraw.png)
@@ -126,4 +131,4 @@ By integrating this Jenkins pipeline, the project demonstrates a practical appli
 
 ## Notes
 
-The voting application only accepts one vote per client browser. It does not register additional votes if a vote has already been submitted from a client.
+The voting application only accepts one vote per client browser. It does not register additional votes if a vote has already been submitted by a client.
